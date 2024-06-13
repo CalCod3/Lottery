@@ -1,0 +1,111 @@
+<!-- enter_lottery.html -->
+
+{% load custom_filters %}
+<!-- Load the custom filter -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Enter Lottery</title>
+    <style>
+      .number-grid,
+      .star-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+      }
+      .number-grid div,
+      .star-grid div {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+
+      .star {
+        font-size: 18px; /* Adjust font size as needed */
+        line-height: 1; /* Ensure proper alignment */
+      }
+
+      .selected {
+        background-color: #ffd700; /* Yellow */
+      }
+      .disabled {
+        pointer-events: none; /* Disable pointer events */
+        opacity: 0.5; /* Add opacity to visually indicate disabled state */
+      }
+      .submit-button {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Enter Lottery</h2>
+    <span class="br"></span>
+    <form id="lottery-form" method="post">
+      {% csrf_token %}
+      <div class="number-grid">
+        {% for num in 1|range_filter:51 %}
+        <!-- Adjusted to provide upper limit and starting point -->
+        <div class="number" data-number="{{ num }}">{{ num }}</div>
+        {% endfor %}
+      </div>
+      <div class="star-grid">
+        {% for num in 1|range_filter:13 %}
+        <!-- Adjusted to provide upper limit and starting point -->
+        <div class="star" data-star="{{ num }}">★<br />{{ num }}</div>
+        {% endfor %}
+      </div>
+      <button type="submit" class="submit-button">Submit</button>
+    </form>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const numbers = document.querySelectorAll(".number");
+        const stars = document.querySelectorAll(".star");
+        const form = document.getElementById("lottery-form");
+        let selectedNumbers = 0;
+        let selectedStars = 0;
+
+        numbers.forEach((number) => {
+          number.addEventListener("click", () => {
+            if (selectedNumbers < 5 || number.classList.contains("selected")) {
+              number.classList.toggle("selected");
+              selectedNumbers =
+                document.querySelectorAll(".number.selected").length;
+            }
+          });
+        });
+
+        stars.forEach((star) => {
+          star.addEventListener("click", () => {
+            if (selectedStars < 2 || star.classList.contains("selected")) {
+              star.classList.toggle("selected");
+              selectedStars =
+                document.querySelectorAll(".star.selected").length;
+            }
+          });
+        });
+
+        form.addEventListener("submit", (event) => {
+          if (selectedNumbers !== 5 || selectedStars !== 2) {
+            event.preventDefault(); // Prevent form submission if selections are not complete
+            alert("Please select exactly 5 numbers and 2 stars.");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

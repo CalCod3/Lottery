@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lottery Results</title>
+  </head>
+  <body>
+    <h1>Lottery Results</h1>
+
+    <h2>Winning Numbers</h2>
+    <p>Normal Numbers: {{ normal_numbers|join:', ' }}</p>
+    <p>Star Numbers: {{ star_numbers|join:', ' }}</p>
+
+    <h2>Entries and Prizes</h2>
+    <ul>
+      {% for result in results %}
+      <li>
+        <p>Owner: {{ result.entry.owner }}</p>
+        <p>Selected Normal Numbers: {{ result.entry.normal_numbers }}</p>
+        <p>Selected Star Numbers: {{ result.entry.star_numbers }}</p>
+        <p>Prize: {{ result.prize }}</p>
+      </li>
+      {% endfor %}
+    </ul>
+  </body>
+</html>
