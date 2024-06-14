@@ -1,0 +1,10 @@
+<div class="navbar">
+  <div class="navbar-brand">
+    LottoMillions
+    <img src="path/to/your/logo.png" alt="" height="30" />
+  </div>
+  {% if user.is_authenticated %}
+  <p>Welcome, {{ user.username|title }}!</p>
+  <a class="logout-btn" href="{% url 'logout' %}">Logout</a>
+  {% endif %}
+</div>

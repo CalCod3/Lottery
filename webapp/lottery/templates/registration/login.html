@@ -1,1 +1,12 @@
-{% extends "admin/login.html" %} 
+{% extends "admin/login.html" %} {% block content %}
+<form method="post" action="{% url 'login' %}">
+  {% csrf_token %} {{ form.as_p }}
+
+  <button type="submit">Login</button>
+</form>
+<hr />
+<div>
+  <a href="{% url 'register' %}">Signup</a> |
+  <a href="{% url 'password_reset' %}">Forgot Password?</a>
+</div>
+{% endblock %}

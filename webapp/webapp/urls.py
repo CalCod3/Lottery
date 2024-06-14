@@ -17,10 +17,18 @@ Including another URLconf
 from django.contrib import admin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import include, path
+from lottery.views import signup_view, custom_logout
+from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('lottery/', include('lottery.urls')),
     path('', LoginView.as_view(), name='login'),
-    path('accounts/logout/', LogoutView.as_view(), name='logout'),
+    path('logout/', custom_logout, name='logout'),
+    path('register/', signup_view, name='register'),
+    path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
+    path('password-reset/done/', PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password-reset/confirm/<uidb64>/<token>/', PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset/complete/', PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 ]
+

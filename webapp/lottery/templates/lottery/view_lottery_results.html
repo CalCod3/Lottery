@@ -4,24 +4,175 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lottery Results</title>
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start; /* Align items at the top */
+        min-height: 100vh;
+        margin: 0;
+        background-color: #f2f2f2; /* Background color */
+      }
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f8f9fa;
+        padding: 10px 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000; /* Ensure it's above other content */
+      }
+      .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+      .logout-btn {
+        background-color: #db8171;
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        padding-right: 30px;
+      }
+      .logout-btn:hover {
+        background-color: #c82333;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        width: 90%; /* Increased width */
+        max-width: 1200px; /* Adjust as needed */
+        background-color: #fff; /* Container background color */
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Box shadow for container */
+        box-sizing: border-box;
+        padding-top: 100px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .content {
+        display: flex;
+        justify-content: space-between;
+      }
+      .panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .number-grid,
+      .star-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+      }
+      .number-grid div,
+      .star-grid div {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .star {
+        font-size: 24px;
+        line-height: 1;
+      }
+      .selected {
+        background-color: #ffd700; /* Yellow */
+      }
+      .submit-button {
+        background-color: #4caf50; /* Green */
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      .selected-numbers-container {
+        width: 30%; /* Adjust width as needed */
+        padding: 20px;
+        border-left: 1px solid #ccc; /* Add border to separate from the form */
+      }
+      .selected-numbers {
+        margin-bottom: 20px;
+      }
+      .selected-numbers h3 {
+        margin-bottom: 10px;
+      }
+      .entry {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .winning-numbers {
+        background-color: #e0f7fa; /* Light cyan background for winning numbers section */
+        padding: 20px;
+        border-radius: 10px;
+        width: 45%; /* Adjust as needed */
+      }
+      .entries-prizes {
+        width: 50%; /* Adjust as needed */
+      }
+      .jackpot {
+        background-color: rgba(255, 215, 0, 0.5); /* Gold */
+      }
+      .prize1 {
+        background-color: rgba(192, 192, 192, 0.5); /* Silver */
+      }
+      .prize2,
+      .prize3,
+      .prize4,
+      .prize5,
+      .prize6,
+      .prize7,
+      .prize8,
+      .prize9 {
+        background-color: rgba(205, 127, 50, 0.5); /* Bronze */
+      }
+      .no-prize {
+        background-color: rgba(240, 240, 240, 0.5); /* Light gray */
+      }
+    </style>
   </head>
   <body>
-    <h1>Lottery Results</h1>
-
-    <h2>Winning Numbers</h2>
-    <p>Normal Numbers: {{ normal_numbers|join:', ' }}</p>
-    <p>Star Numbers: {{ star_numbers|join:', ' }}</p>
-
-    <h2>Entries and Prizes</h2>
-    <ul>
-      {% for result in results %}
-      <li>
-        <p>Owner: {{ result.entry.owner }}</p>
-        <p>Selected Normal Numbers: {{ result.entry.normal_numbers }}</p>
-        <p>Selected Star Numbers: {{ result.entry.star_numbers }}</p>
-        <p>Prize: {{ result.prize }}</p>
-      </li>
-      {% endfor %}
-    </ul>
+    {% include 'navbar.html' %}
+    <div class="container">
+      <div class="header">
+        <h1>Lottery Results</h1>
+      </div>
+      <div class="content">
+        <div class="winning-numbers">
+          <h2>Winning Numbers</h2>
+          <p>Normal Numbers: {{ normal_numbers|join:', ' }}</p>
+          <p>Star Numbers: {{ star_numbers|join:', ' }}</p>
+        </div>
+        <div class="entries-prizes">
+          <h2>Entries and Prizes</h2>
+          <ul>
+            {% for result in results %}
+            <li
+              class="entry {% if result.prize == 'Jackpot Prize' %}jackpot{% elif result.prize == 'Normal Prize 1' %}prize1 {% elif result.prize == 'Normal Prize 2' %}prize2{% elif result.prize == 'Normal Prize 3' %}prize3 {% elif result.prize == 'Normal Prize 4' %}prize4{% elif result.prize == 'Normal Prize 5' %}prize5 {% elif result.prize == 'Normal Prize 6' %}prize6{% elif result.prize == 'Normal Prize 7' %}prize7 {% elif result.prize == 'Normal Prize 8' %}prize8{% elif result.prize == 'Normal Prize 9' %}prize9 {% else %}no-prize{% endif %}"
+            >
+              <p>Owner: {{ result.entry.owner|title }}</p>
+              <p>Selected Normal Numbers: {{ result.entry.normal_numbers }}</p>
+              <p>Selected Star Numbers: {{ result.entry.star_numbers }}</p>
+              <p>Prize: {{ result.prize }}</p>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
   </body>
 </html>

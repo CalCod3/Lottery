@@ -1,8 +1,4 @@
-<!-- enter_lottery.html -->
-
 {% load custom_filters %}
-<!-- Load the custom filter -->
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -10,101 +6,226 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enter Lottery</title>
     <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+        margin: 50px 0 0; /* Adjust top margin to match navbar height */
+        background-color: #f2f2f2;
+      }
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f8f9fa;
+        padding: 10px 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000; /* Ensure it's above other content */
+      }
+      .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+      .logout-btn {
+        background-color: #db8171;
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+        padding-right: 30px;
+      }
+      .logout-btn:hover {
+        background-color: #c82333;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        max-width: 1200px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 20px; /* Adjust margin as needed */
+      }
+      .form-row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .column {
+        flex: 1 1 18%;
+        margin: 10px;
+        min-width: 200px;
+        max-width: 220px;
+        box-sizing: border-box;
+      }
+      .panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
       .number-grid,
       .star-grid {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         gap: 5px;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
       }
       .number-grid div,
       .star-grid div {
         border: 1px solid #ccc;
-        padding: 10px;
+        padding: 5px;
         text-align: center;
         cursor: pointer;
       }
-
       .star {
-        font-size: 18px; /* Adjust font size as needed */
-        line-height: 1; /* Ensure proper alignment */
+        font-size: 20px;
+        line-height: 1;
       }
-
       .selected {
-        background-color: #ffd700; /* Yellow */
-      }
-      .disabled {
-        pointer-events: none; /* Disable pointer events */
-        opacity: 0.5; /* Add opacity to visually indicate disabled state */
+        background-color: #ffd700;
       }
       .submit-button {
-        background-color: #4caf50; /* Green */
+        background-color: #4caf50;
         border: none;
         color: white;
         padding: 15px 32px;
         text-align: center;
         text-decoration: none;
-        display: inline-block;
         font-size: 16px;
-        margin: 4px 2px;
+        margin-top: 20px;
         cursor: pointer;
+        width: 100%;
       }
     </style>
   </head>
   <body>
-    <h2>Enter Lottery</h2>
-    <span class="br"></span>
-    <form id="lottery-form" method="post">
-      {% csrf_token %}
-      <div class="number-grid">
-        {% for num in 1|range_filter:51 %}
-        <!-- Adjusted to provide upper limit and starting point -->
-        <div class="number" data-number="{{ num }}">{{ num }}</div>
-        {% endfor %}
-      </div>
-      <div class="star-grid">
-        {% for num in 1|range_filter:13 %}
-        <!-- Adjusted to provide upper limit and starting point -->
-        <div class="star" data-star="{{ num }}">★<br />{{ num }}</div>
-        {% endfor %}
-      </div>
-      <button type="submit" class="submit-button">Submit</button>
-    </form>
+    {% include 'navbar.html' %}
+    <div class="container">
+      <form id="lottery-form" method="post">
+        {% csrf_token %}
+        <div class="form-row">
+          {% for i in 1|range_filter:6 %}
+          <div class="column" id="entry-{{ i }}">
+            <div class="panel">
+              <h3>Entry {{ i }}</h3>
+              <div class="number-grid">
+                {% for num in 1|range_filter:51 %}
+                <div
+                  class="number"
+                  data-number="{{ num }}"
+                  data-entry-index="{{ i|add:"-1" }}"
+                >
+                  {{ num }}
+                </div>
+                {% endfor %}
+              </div>
+              <div class="star-grid">
+                {% for num in 1|range_filter:13 %}
+                <div
+                  class="star"
+                  data-star="{{ num }}"
+                  data-entry-index="{{ i|add:"-1" }}"
+                >
+                  ★<br />{{ num }}
+                </div>
+                {% endfor %}
+              </div>
+              <div class="hidden-fields"></div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <button type="submit" class="submit-button">Submit</button>
+      </form>
+    </div>
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        const numbers = document.querySelectorAll(".number");
-        const stars = document.querySelectorAll(".star");
         const form = document.getElementById("lottery-form");
-        let selectedNumbers = 0;
-        let selectedStars = 0;
+        let entries = Array.from({ length: 5 }, () => ({
+          numbers: [],
+          stars: [],
+        }));
 
-        numbers.forEach((number) => {
-          number.addEventListener("click", () => {
-            if (selectedNumbers < 5 || number.classList.contains("selected")) {
-              number.classList.toggle("selected");
-              selectedNumbers =
-                document.querySelectorAll(".number.selected").length;
+        function handleSelection(event, type) {
+          const entryIndex = parseInt(event.currentTarget.dataset.entryIndex);
+          const value = event.target.dataset[type];
+          const collection = type === "number" ? "numbers" : "stars";
+          const isSelected = event.target.classList.contains("selected");
+
+          if (
+            (collection === "numbers" && entries[entryIndex].numbers.length < 5) ||
+            (collection === "stars" && entries[entryIndex].stars.length < 2) ||
+            isSelected
+          ) {
+            event.target.classList.toggle("selected");
+            if (isSelected) {
+              entries[entryIndex][collection] = entries[entryIndex][collection].filter(
+                (v) => v !== value
+              );
+            } else {
+              entries[entryIndex][collection].push(value);
             }
-          });
-        });
-
-        stars.forEach((star) => {
-          star.addEventListener("click", () => {
-            if (selectedStars < 2 || star.classList.contains("selected")) {
-              star.classList.toggle("selected");
-              selectedStars =
-                document.querySelectorAll(".star.selected").length;
-            }
-          });
-        });
-
-        form.addEventListener("submit", (event) => {
-          if (selectedNumbers !== 5 || selectedStars !== 2) {
-            event.preventDefault(); // Prevent form submission if selections are not complete
-            alert("Please select exactly 5 numbers and 2 stars.");
           }
+        }
+
+        function addEntryListeners(entryIndex) {
+          const numbers = document.querySelectorAll(`#entry-${entryIndex + 1} .number`);
+          const stars = document.querySelectorAll(`#entry-${entryIndex + 1} .star`);
+
+          numbers.forEach((number) => {
+            number.addEventListener("click", (event) => handleSelection(event, "number"));
+          });
+
+          stars.forEach((star) => {
+            star.addEventListener("click", (event) => handleSelection(event, "star"));
+          });
+        }
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          let hasPartialEntry = false;
+          const validEntries = entries.filter(entry => {
+            const isComplete = entry.numbers.length === 5 && entry.stars.length === 2;
+            if (entry.numbers.length > 0 || entry.stars.length > 0) {
+              hasPartialEntry = !isComplete;
+            }
+            return isComplete;
+          });
+
+          if (hasPartialEntry) {
+            alert("Some entries are partially filled. Please complete all or none of the entries.");
+            return;
+          }
+
+          validEntries.forEach((entry, index) => {
+            const inputNumbers = document.createElement("input");
+            inputNumbers.type = "hidden";
+            inputNumbers.name = `normal_numbers_${index + 1}`;
+            inputNumbers.value = entry.numbers.join(",");
+            form.appendChild(inputNumbers);
+
+            const inputStars = document.createElement("input");
+            inputStars.type = "hidden";
+            inputStars.name = `star_numbers_${index + 1}`;
+            inputStars.value = entry.stars.join(",");
+            form.appendChild(inputStars);
+          });
+
+          form.submit();
         });
+
+        for (let i = 0; i < 5; i++) {
+          addEntryListeners(i);
+        }
       });
     </script>
   </body>
