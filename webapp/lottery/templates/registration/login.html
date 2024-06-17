@@ -1,12 +1,51 @@
-{% extends "admin/login.html" %} {% block content %}
-<form method="post" action="{% url 'login' %}">
-  {% csrf_token %} {{ form.as_p }}
+{% block content %}
+<body
+  style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 50px 0 0; /* Adjust top margin to match navbar height */
+    background-color: #f2f2f2;
+  "
+>
+  <div
+    style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;
+    "
+  >
+    <h2>Log In</h2>
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %} {{ form.as_p }}
 
-  <button type="submit">Login</button>
-</form>
-<hr />
-<div>
-  <a href="{% url 'register' %}">Signup</a> |
-  <a href="{% url 'password_reset' %}">Forgot Password?</a>
-</div>
+      <button
+        type="submit"
+        style="
+          background-color: #549ee4;
+          color: white;
+          border: none;
+          padding: 10px 30px;
+          border-radius: 5px;
+          cursor: pointer;
+          padding-right: 30px;
+        "
+      >
+        Login
+      </button>
+    </form>
+    <hr />
+    <div>
+      <a href="{% url 'register' %}">Signup</a> |
+      <a href="{% url 'password_reset' %}">Forgot Password?</a>
+    </div>
+  </div>
+</body>
 {% endblock %}

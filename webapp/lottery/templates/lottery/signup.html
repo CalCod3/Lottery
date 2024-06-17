@@ -1,0 +1,45 @@
+  <body style="
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 50px 0 0; /* Adjust top margin to match navbar height */
+    background-color: #f2f2f2;"
+    >
+    <div style="
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-top: 20px;"
+      >
+      <h2>Sign up</h2>
+      <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+          <p>
+            {{ field.label_tag }}<br>
+            {{ field }}
+            {% if field.help_text %}
+              <small style="color: grey;">{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+              <p style="color: red;">{{ error }}</p>
+            {% endfor %}
+          </p>
+        {% endfor %}
+        <button type="submit" style="
+          background-color: #54e460;
+          color: white;
+          border: none;
+          padding: 10px 30px;
+          border-radius: 5px;
+          cursor: pointer;
+          padding-right: 30px;">Sign up</button>
+      </form>
+  </div>
+  </body>

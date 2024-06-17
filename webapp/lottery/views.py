@@ -2,7 +2,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .helpers import calculate_prize, generate_winning_numbers
-from .models import BetSlip
+from .models import BetSlip, Draw
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
@@ -10,6 +10,7 @@ from django.contrib.auth import authenticate, login, logout
 @login_required
 def enter_lottery(request):
     if request.method == 'POST':
+        latest_draw = Draw.objects.latest('draw_date')
         entries = []
         for i in range(1, 6):
             normal_numbers = request.POST.get(f'normal_numbers_{i}')
@@ -28,6 +29,7 @@ def enter_lottery(request):
                 owner=request.user,
                 normal_numbers=entry['normal_numbers'],
                 star_numbers=entry['star_numbers'],
+                draw=latest_draw
             )
             betslip.save()
 
@@ -37,16 +39,20 @@ def enter_lottery(request):
 
 @login_required
 def view_lottery_results(request):
-    normal_numbers, star_numbers = generate_winning_numbers()
+    latest_draw = Draw.objects.latest('draw_date')
+    normal_numbers = [int(num) for num in latest_draw.normal_numbers.split(',')]
+    star_numbers = [int(num) for num in latest_draw.star_numbers.split(',')]
+    
     # Filter entries belonging to the current user
-    entries = BetSlip.objects.filter(owner=request.user)
+    entries = BetSlip.objects.filter(owner=request.user, draw=latest_draw)
     results = []
 
     for entry in entries:
-        prize = calculate_prize(entry, (normal_numbers, star_numbers))
+        prize = entry.prize  # Prize is already calculated during the draw
         results.append({'entry': entry, 'prize': prize})
 
     return render(request, 'lottery/view_lottery_results.html', {'results': results, 'normal_numbers': normal_numbers, 'star_numbers': star_numbers})
+
 
 def signup_view(request):
     if request.method == 'POST':

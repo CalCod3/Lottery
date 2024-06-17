@@ -23,7 +23,7 @@ from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('lottery/', include('lottery.urls')),
-    path('', LoginView.as_view(), name='login'),
+    path('', LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', custom_logout, name='logout'),
     path('register/', signup_view, name='register'),
     path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
