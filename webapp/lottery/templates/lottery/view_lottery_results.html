@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -6,12 +7,15 @@
     <title>Lottery Results</title>
     <style>
       body {
+        background: url("{% static "lottery/bg.png" %}") no-repeat center center
+          fixed;
+        background-size: cover;
         display: flex;
         justify-content: center;
         align-items: flex-start; /* Align items at the top */
         min-height: 100vh;
         margin: 0;
-        background-color: #f2f2f2; /* Background color */
+        background-color: #ffd700; /* Background color */
       }
       .navbar {
         position: fixed;

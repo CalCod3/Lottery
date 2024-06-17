@@ -11,6 +11,9 @@ def calculate_prize(entry, winning_numbers):
     normal_numbers = [int(num) for num in entry.normal_numbers.split(',')]
     star_numbers = [int(num) for num in entry.star_numbers.split(',')]
     
+    print(normal_numbers)
+    print(star_numbers)
+    
     normal_matches = len(set(normal_numbers) & set(winning_numbers[0]))
     star_matches = len(set(star_numbers) & set(winning_numbers[1]))
 
