@@ -9,7 +9,14 @@ def get_next_friday():
     if days_until_friday == 0:  # If today is already Friday, move to next Friday
         days_until_friday = 7
     next_friday = today + datetime.timedelta(days=days_until_friday)
-    return next_friday
+    
+    # Set the target time to 4 PM
+    target_time = datetime.time(hour=16)  # 4 PM
+    
+    # Combine the date and target time into a datetime object
+    next_friday_datetime = datetime.datetime.combine(next_friday, target_time)
+    
+    return next_friday_datetime
 
 class Draw(models.Model):
     draw_date = models.DateTimeField(default=get_next_friday)
