@@ -1,6 +1,22 @@
 {% block content %} {% load static %}
-<body
-  style="
+<style>
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Poppins', sans-serif;
+  }
+
+  p,
+  a,
+  span {
+    font-family: 'Poppins', sans-serif;
+  }
+</style>
+
+<body style="
     background: url('{% static 'lottery/bg.png' %}') no-repeat center center
       fixed;
     background-size: cover;
@@ -10,10 +26,9 @@
     min-height: 100vh;
     margin: 50px 0 0; /* Adjust top margin to match navbar height */
     background-color: #ffd700;
-  "
->
-  <div
-    style="
+    font-family: 'Poppins', sans-serif;
+  ">
+  <div style="
       display: flex;
       align-items: center;
       justify-content: center;
@@ -23,15 +38,12 @@
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
-    "
-  >
+    ">
     <h2>Log In</h2>
     <form method="post" action="{% url 'login' %}">
       {% csrf_token %} {{ form.as_p }}
 
-      <button
-        type="submit"
-        style="
+      <button type="submit" style="
           background-color: #549ee4;
           color: white;
           border: none;
@@ -39,13 +51,16 @@
           border-radius: 5px;
           cursor: pointer;
           padding-right: 30px;
-        "
-      >
+        ">
         Login
       </button>
     </form>
     <hr />
-    <div>
+    <div style="
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;">
       <a href="{% url 'register' %}">Signup</a> |
       <a href="{% url 'password_reset' %}">Forgot Password?</a>
     </div>

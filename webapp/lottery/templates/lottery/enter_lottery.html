@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Enter Lottery</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
       body {
         background: url('{% static 'lottery/bg.png' %}') no-repeat center center
@@ -16,6 +17,7 @@
         min-height: 100vh;
         margin: 50px 0 0; /* Adjust top margin to match navbar height */
         background-color: #ffd700; /* Background color */
+        font-family: 'Poppins', sans-serif;
       }
       .navbar {
         position: fixed;
@@ -80,6 +82,7 @@
         grid-template-columns: repeat(5, 1fr);
         gap: 5px;
         margin-bottom: 10px;
+        font-family: 'Poppins', sans-serif;
       }
       .number-grid div,
       .star-grid div {
@@ -91,6 +94,7 @@
       .star {
         font-size: 20px;
         line-height: 1;
+        font-family: 'Poppins', sans-serif;
       }
       .selected {
         background-color: #ffd700;
@@ -106,6 +110,12 @@
         margin-top: 20px;
         cursor: pointer;
         width: 100%;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Poppins', sans-serif;
+      }
+      p, a, span {
+        font-family: 'Poppins', sans-serif;
       }
     </style>
   </head>

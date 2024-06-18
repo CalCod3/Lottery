@@ -4,7 +4,9 @@
     <img src="path/to/your/logo.png" alt="" height="30" />
   </div>
   {% if user.is_authenticated %}
+  <div>
   <p>Welcome, {{ user.username|title }}!</p>
   <a class="logout-btn" href="{% url 'logout' %}">Logout</a>
+  </div>
   {% endif %}
 </div>
