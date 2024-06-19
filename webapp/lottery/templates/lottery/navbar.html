@@ -1,7 +1,12 @@
-<div class="navbar">
+<nav class="navbar navbar-light bg-light">
   <div class="navbar-brand">
-    <!-- Your logo or brand name here -->
-    <img src="path/to/your/logo.png" alt="Logo" height="30" />
+    LottoMillions
+    <img src="path/to/your/logo.png" alt="" height="30" />
   </div>
-  <button class="logout-btn" onclick="location.href='/logout'">Logout</button>
-</div>
+  {% if user.is_authenticated %}
+    <div>
+      <p>Welcome, {{ user.username|title }}!</p>
+      <a class="logout-btn" href="{% url 'logout' %}">Logout</a>
+    </div>
+  {% endif %}
+</nav>

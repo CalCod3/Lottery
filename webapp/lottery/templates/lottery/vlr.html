@@ -1,0 +1,251 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lottery Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background: url("{% static "lottery/bg.png" %}") no-repeat center center fixed;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        margin: 0;
+        background-color: #ffd700;
+        font-family: 'Roboto', sans-serif;
+      }
+      .navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        background-color: #f8f9fa;
+        padding: 10px 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+      }
+      .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+      .logout-btn {
+        background-color: #db8171;
+        color: white;
+        border: none;
+        padding: 10px 30px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      .logout-btn:hover {
+        background-color: #c82333;
+      }
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+        margin-top: 80px;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      .content {
+        display: flex;
+        justify-content: space-between;
+      }
+      .panel {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .number-grid,
+      .star-grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 5px;
+        margin-bottom: 20px;
+      }
+      .number-grid div,
+      .star-grid div {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+      }
+      .star {
+        font-size: 24px;
+        line-height: 1;
+        font-family: 'Roboto', sans-serif;
+      }
+      .selected {
+        background-color: #ffd700;
+      }
+      .submit-button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+      .selected-numbers-container {
+        width: 30%;
+        padding: 20px;
+        border-left: 1px solid #ccc;
+      }
+      .selected-numbers {
+        margin-bottom: 20px;
+      }
+      .selected-numbers h3 {
+        margin-bottom: 10px;
+      }
+      .entry {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 5px;
+      }
+      .winning-numbers {
+        background-color: #e0f7fa;
+        padding: 20px;
+        border-radius: 10px;
+        width: 45%;
+      }
+      .entries-prizes {
+        width: 50%;
+      }
+      .jackpot {
+        background-color: rgba(255, 215, 0, 0.5);
+      }
+      .prize1 {
+        background-color: rgba(192, 192, 192, 0.5);
+      }
+      .prize2,
+      .prize3,
+      .prize4,
+      .prize5,
+      .prize6,
+      .prize7,
+      .prize8,
+      .prize9 {
+        background-color: rgba(205, 127, 50, 0.5);
+      }
+      .no-prize {
+        background-color: rgba(240, 240, 240, 0.5);
+      }
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Roboto', sans-serif;
+      }
+      p, a, span {
+        font-family: 'Roboto', sans-serif;
+      }
+      .ball {
+        font-size: 1.5rem;
+        color: #fff;
+        text-align: center;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        display: inline-block;
+        margin: 5px;
+      }
+      .ball-3 { background-color: #007bff; }
+      .ball-37 { background-color: #28a745; }
+      .ball-42 { background-color: #dc3545; }
+      .ball-9 { background-color: #17a2b8; }
+      .ball-28 { background-color: #ffc107; }
+      .ball-4, .ball-9 { background-color: #6f42c1; }
+      #countdown{
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+        color: #000;
+      }
+    </style>
+  </head>
+  {% include 'navbar.html' %}
+  <body>
+    
+    <div class="container">
+      <div class="header">
+        <h1>Lottery Results</h1>
+      </div>
+      <div class="content">
+        <div class="winning-numbers shadow-lg">
+          <h2>Winning Numbers</h2>
+          <p>Normal Numbers: {% for number, color in normal_numbers %}<span class="ball ball-{{ number }}" style="background-color: {{ color }}">{{ number }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+          <p>Star Numbers: {% for number, color in star_numbers %}<span class="ball ball-{{ number }}" style="background-color: {{ color }}">{{ number }}</span>{% if not forloop.last %}, {% endif %}{% endfor %}</p>
+          <!-- Time until next draw -->
+          <div id="countdown"></div>
+        </div>
+        <div class="entries-prizes">
+          <h2>Entries and Prizes</h2>
+          <ul>
+            {% for result in results %}
+            <li class="entry {% if result.prize == 'Jackpot Prize' %}jackpot{% elif result.prize == 'Normal Prize 1' %}prize1 {% elif result.prize == 'Normal Prize 2' %}prize2{% elif result.prize == 'Normal Prize 3' %}prize3 {% elif result.prize == 'Normal Prize 4' %}prize4{% elif result.prize == 'Normal Prize 5' %}prize5 {% elif result.prize == 'Normal Prize 6' %}prize6{% elif result.prize == 'Normal Prize 7' %}prize7 {% elif result.prize == 'Normal Prize 8' %}prize8{% elif result.prize == 'Normal Prize 9' %}prize9 {% else %}no-prize{% endif %} shadow-lg">
+              <p>Owner: {{ result.entry.owner|title }}</p>
+              <p>Selected Normal Numbers: {{ result.entry.normal_numbers }}</p>
+              <p>Selected Star Numbers: {{ result.entry.star_numbers }}</p>
+              <p>Prize: {{ result.prize }}</p>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script>
+      // Function to calculate and display countdown
+      function countdown() {
+          // Set the date of the next Friday at 4 PM
+          var countDownDate = new Date();
+          countDownDate.setDate(countDownDate.getDate() + (5 + (7 - countDownDate.getDay())) % 7);
+          countDownDate.setHours(16, 0, 0, 0);
+    
+          // Update the countdown every second
+          var x = setInterval(function () {
+              var now = new Date().getTime();
+              var distance = countDownDate - now;
+    
+              // Calculate days, hours, minutes, and seconds
+              var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+              var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+              var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    
+              // Display the countdown
+              document.getElementById("countdown").innerHTML = "Time until next draw: " + days + "d " + hours + "h " + minutes + "m ";
+    
+              // If the countdown is over, display a message
+              if (distance < 0) {
+                  clearInterval(x);
+                  document.getElementById("countdown").innerHTML = "Draw has started!";
+              }
+          }, 1000);
+      }
+    
+      // Call the countdown function when the page loads
+      window.onload = function () {
+          countdown();
+      };
+    </script>
+  </body>
+</html>

@@ -1,22 +1,25 @@
-{% block content %} {% load static %}
-<style>
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    font-family: 'Poppins', sans-serif;
-  }
+{% block content %}
+  {% load static %}
+  {% load widget_tweaks %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+  <style>
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    p,
+    a,
+    span {
+      font-family: 'Poppins', sans-serif;
+    }
+  </style>
 
-  p,
-  a,
-  span {
-    font-family: 'Poppins', sans-serif;
-  }
-</style>
-
-<body style="
+  <body style="
     background: url('{% static 'lottery/bg.png' %}') no-repeat center center
       fixed;
     background-size: cover;
@@ -28,7 +31,7 @@
     background-color: #ffd700;
     font-family: 'Poppins', sans-serif;
   ">
-  <div style="
+    <div style="
       display: flex;
       align-items: center;
       justify-content: center;
@@ -39,11 +42,23 @@
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       margin-top: 20px;
     ">
-    <h2>Log In</h2>
-    <form method="post" action="{% url 'login' %}">
-      {% csrf_token %} {{ form.as_p }}
+      <h2>Log In</h2>
+      <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
 
-      <button type="submit" style="
+        {% for field in form.visible_fields %}
+          <div class="form-group mb-3">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field|add_class:'form-control' }} {% for error in field.errors %}
+              <span class="help-block form-text">{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <button type="submit" style="
           background-color: #549ee4;
           color: white;
           border: none;
@@ -51,19 +66,14 @@
           border-radius: 5px;
           cursor: pointer;
           padding-right: 30px;
-        ">
-        Login
-      </button>
-    </form>
-    <hr />
-    <div style="
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;">
-      <a href="{% url 'register' %}">Signup</a> |
-      <a href="{% url 'password_reset' %}">Forgot Password?</a>
+        ">Login</button>
+      </form>
+      <hr />
+      <div class="d-flex justify-content-between align-content-end">
+        <a class="px-4" href="{% url 'register' %}">Signup</a>
+        |
+        <a class="px-4" href="{% url 'password_reset' %}">Forgot Password?</a>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 {% endblock %}

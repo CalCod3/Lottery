@@ -1,13 +1,24 @@
+{% block content %}
+  {% load static %} {% load widget_tweaks %}
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
   <style>
-    h1, h2, h3, h4, h5, h6 {
-        font-family: 'Poppins', sans-serif;
-      }
-      p, a, span {
-        font-family: 'Poppins', sans-serif;
-      }
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-family: 'Poppins', sans-serif;
+    }
+    p,
+    a,
+    span {
+      font-family: 'Poppins', sans-serif;
+    }
   </style>
   <body style="
-    background: url('{% static 'lottery/bg.png' %}') no-repeat center center fixed;
+    background: url('{% static 'lottery/bg.png' %}') no-repeat center center
+      fixed;
     background-size: cover;
     display: flex;
     flex-direction: column;
@@ -16,7 +27,7 @@
     margin: 50px 0 0; /* Adjust top margin to match navbar height */
     background-color: #ffd700; /* Background color */
     font-family: 'Poppins', sans-serif;
-    >
+  ">
     <div style="
       display: flex;
       align-items: center;
@@ -26,31 +37,29 @@
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      margin-top: 20px;"
-      >
+      margin-top: 20px;
+    ">
       <h2>Sign up</h2>
       <form method="post">
         {% csrf_token %}
-        {% for field in form %}
-          <p>
-            {{ field.label_tag }}<br>
-            {{ field }}
-            {% if field.help_text %}
-              <small style="color: grey;">{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-              <p style="color: red;">{{ error }}</p>
-            {% endfor %}
-          </p>
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
         {% endfor %}
-        <button type="submit" style="
-          background-color: #54e460;
-          color: white;
-          border: none;
-          padding: 10px 30px;
-          border-radius: 5px;
-          cursor: pointer;
-          padding-right: 30px;">Sign up</button>
+
+        {% for field in form.visible_fields %}
+          <div class="form-group mb-3">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field|add_class:'form-control' }} {% for error in field.errors %}
+              <span class="help-block">{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% endfor %}
+
+        <div class="form-group px-4">
+          <button type="submit" class="btn btn-primary pr-2">Sign up</button>
+          <button type="button" class="btn btn-secondary">Cancel</button>
+        </div>
       </form>
-  </div>
+    </div>
   </body>
+{% endblock %}

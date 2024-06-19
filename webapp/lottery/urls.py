@@ -5,6 +5,7 @@ from . import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+app_name = 'lottery'
 urlpatterns = [
     path('enter/', views.enter_lottery, name='enter_lottery'),
     path('results/', views.view_lottery_results, name='view_lottery_results'),
