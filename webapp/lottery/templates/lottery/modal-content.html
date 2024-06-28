@@ -1,0 +1,31 @@
+<form id="lottery-form" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="entry">
+    <div class="row g-3 d-flex flex-row ">
+      {% for i in 1|range_filter:6 %}
+      <div class="col-md-4 mb-3" id="entry-{{ i }}">
+        <div class="card h-100 w-25">
+          <div class="card-body">
+            <h5 class="card-title">Entry {{ i }}</h5>
+            <div class="d-flex flex-wrap justify-content-center mb-3">
+              {% for num in 1|range_filter:51 %}
+              <div class="number p-2 border rounded m-1" style="width: 40px; height: 40px;" data-number="{{ num }}" data-entry-index="{{ i|add:"-1" }}">
+                {{ num }}
+              </div>
+              {% endfor %}
+            </div>
+            <div class="d-flex flex-wrap justify-content-center mb-3">
+              {% for num in 1|range_filter:13 %}
+              <div class="star p-2 border rounded m-1" style="width: 40px; height: 40px;" data-star="{{ num }}" data-entry-index="{{ i|add:"-1" }}">
+                {{ num }}
+              </div>
+              {% endfor %}
+            </div>
+            <div class="hidden-fields"></div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>

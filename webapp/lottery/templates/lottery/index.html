@@ -1,0 +1,529 @@
+{% load custom_filters %} {% load static %} {% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Play AngolaMillions</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="{% static 'lottery/img/favicon.svg' %}">
+    <link rel="icon" type="image/png" href="{% static 'lottery/img/favicon.png' %}">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">  
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="{% static 'lottery/misc/animate/animate.min.css' %}" rel="stylesheet">
+    <link href="{% static 'lottery/misc/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{% static 'lottery/css/bootstrap.min.css' %}" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="{% static 'lottery/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container-xxl bg-white p-0">
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <!-- Spinner End -->
+
+
+        <!-- Navbar & Hero Start -->
+        <div class="container-xxl position-relative p-0">
+            <nav class="navbar navbar-expand-lg navbar-light px-4 px-lg-5 py-3 py-lg-0">
+                <a href="" class="navbar-brand p-0 d-flex align-items-center">
+                    <img src="{% static 'lottery/logo2.svg' %}" alt="Logo">
+                    <h1 class="m-0">AngolaMillions</h1>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto py-0">
+                        <a href="index.html" class="nav-item nav-link active">Home</a>
+                        <a href="about.html" class="nav-item nav-link">Draw</a>
+                        {% if user.is_authenticated %}
+                            <div class="d-flex align-items-center">
+                            <span class="fst-italic fs-6 me-2 px-4">Welcome, {{ user.username|title }}!</span>
+                            <a class="nav-item nav-link" href="{% url 'logout' %}">Logout</a>
+                            </div>
+                        {% elif user.is_authenticated is not True %}
+                            <a data-bs-toggle="modal" data-bs-target="#registerModal" class="nav-item nav-link">Register</a>
+                            <a data-bs-toggle="modal" data-bs-target="#loginModal" class="nav-item nav-link">Log In</a>
+                        {% endif %}
+                </div>
+            </nav>
+
+            <div class="container-xxl py-5 bg-dark hero-header mb-5">
+                <div class="container my-5 py-5 px-lg-5">
+                    <div class="row g-5">
+                        <div class="col-lg-6 pt-5 text-center text-lg-start">
+                            <h1 class="display-4 text-white mb-4 animated slideInLeft">Play AngolaMillions</h1>
+                            <p class="text-white animated slideInLeft">Tempor rebum no at dolore lorem clita rebum rebum ipsum rebum stet dolor sed justo kasd.</p>
+                            <h1 class="text-white mb-4 animated slideInLeft">
+                                <small class="align-top fw-normal" style="font-size: 15px; line-height: 25px;">Prize:</small>
+                                <span>£ 164M</span>
+                                
+                            </h1>
+                            {% if user.is_authenticated %}
+                                <a href="" class="btn btn-secondary py-sm-3 px-sm-5 me-3 animated slideInLeft" data-bs-toggle="modal" data-bs-target="#entryModal">Play</a>
+                            {% elif user.is_authenticated is not True %}
+                                <a class="btn btn-secondary py-sm-3 px-sm-5 me-3 animated slideInLeft" data-bs-toggle="modal" data-bs-target="#loginModal">Get Started Now</a>
+                            {% endif %}
+                            
+                        </div>
+                        <div class="col-lg-6 text-center text-lg-start p-10">
+                            <div class="position-relative shadow rounded border-top border-5 border-light animated zoomIn bg-light">
+                                <div class="d-flex align-items-center justify-content-center position-absolute top-0 start-50 translate-middle bg-secondary rounded-circle" style="width: 45px; height: 45px; margin-top: -3px;">
+                                    <i class="fa fa-money-bill-wave text-white"></i>
+                                </div>
+                                <div class="text-center border-bottom p-4 pt-5">
+                                    <h4 class="text-dark fw-bold">How to Play</h4>
+                                    <p class="text-dark mb-0">Choose your numbers or go for a lucky dip and let fate decide for you. Click the get started button and start playing AngolaMillions now!</p>
+                                </div>
+                                <div class="text-center border-bottom p-4">
+                                    <p class="text-dark mb-1"><strong>Time to next Draw</strong></p>
+                                    <div id="countdown" class="d-flex justify-content-center">
+                                        <div id="days" class="time-box countdown-segment">
+                                            <h4>0</h4>
+                                            <p>Days</p>
+                                        </div>
+                                        <div id="hours" class="time-box countdown-segment">
+                                            <h4>0</h4>
+                                            <p>Hours</p>
+                                        </div>
+                                        <div id="minutes" class="time-box countdown-segment">
+                                            <h4>0</h4>
+                                            <p>Mins</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="p-4">
+                                    <p class="text-dark border-bottom pb-3"><i class="fa fa-check-circle text-secondary me-3"></i>Pick 5 numbers from 1-50 and 2 Lucky Stars from 1-12.</p>
+                                    <p class="text-dark border-bottom pb-3"><i class="fa fa-check-circle text-secondary me-3"></i>Alternatively try a Lucky Dip® for randomly selected numbers</p>
+                                    <p class="text-dark border-bottom pb-3"><i class="fa fa-check-circle text-secondary me-3"></i>Add as many entries to Draw as desired</p>
+                                </div>
+                                <a href="#prizes" class="btn btn-secondary py-sm-3 px-sm-5 me-3 pb-4" style="right: 0;">Learn more <i class="fas fa-sort-down"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Navbar & Hero End -->
+
+
+        <!-- Form Modals Start -->
+        <div class="modal fade" id="loginModal" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content" style="background: rgba(29, 40, 51, 0.8);">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center">
+                        <div class="bg-light rounded" style="padding: 30px;">
+                            <h2>Log In</h2>
+                            <form method="post" action="{% url 'login' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="login">
+                                {% for hidden in login_form.hidden_fields %}
+                                {{ hidden }}
+                                {% endfor %}
+
+                                {% for field in login_form.visible_fields %}
+                                <div class="form-group mb-3">
+                                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                                    {{ field|add_class:'form-control' }} {% for error in field.errors %}
+                                    <span class="help-block form-text">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                                {% endfor %}
+
+                                <button type="submit">Login</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="entryModal" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content" style="background: rgba(29, 40, 51, 0.8);">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="lottery-form" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="entry">
+                            <div class="row d-flex flex-row ">
+                              {% for i in 1|range_filter:6 %}
+                              <div class="col-sm-3 mb-3" id="entry-{{ i }}">
+                                <div class="card h-100 w-90">
+                                  <div class="card-body">
+                                    <h5 class="card-title">Entry {{ i }}</h5>
+                                    <div class="d-flex flex-wrap justify-content-center mb-3">
+                                      {% for num in 1|range_filter:51 %}
+                                      <div class="number p-2 border rounded m-1" style="width: 40px; height: 40px;" data-number="{{ num }}" data-entry-index="{{ i|add:"-1" }}">
+                                        {{ num }}
+                                      </div>
+                                      {% endfor %}
+                                    </div>
+                                    <div class="d-flex flex-wrap justify-content-center mb-3">
+                                      {% for num in 1|range_filter:13 %}
+                                      <div class="star p-2 border rounded m-1" style="width: 40px; height: 40px;" data-star="{{ num }}" data-entry-index="{{ i|add:"-1" }}">
+                                        {{ num }}
+                                      </div>
+                                      {% endfor %}
+                                    </div>
+                                    <div class="hidden-fields"></div>
+                                  </div>
+                                </div>
+                              </div>
+                              {% endfor %}
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                          </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="registerModal" tabindex="-1">
+            <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content" style="background: rgba(29, 40, 51, 0.8);">
+                    <div class="modal-header border-0">
+                        <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center justify-content-center">
+                        <div class="bg-light rounded" style="padding: 30px;">
+                            <h2>Sign up</h2>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="form_type" value="signup">
+                                {% for field in signup_form %}
+                                <p>
+                                    {{ field.label_tag }}<br>
+                                    {{ field }}
+                                    {% if field.help_text %}
+                                    <small style="color: grey;">{{ field.help_text }}</small>
+                                    {% endif %}
+                                    {% for error in field.errors %}
+                                    <p style="color: red;">{{ error }}</p>
+                                    {% endfor %}
+                                </p>
+                                {% endfor %}
+                                <button type="submit" class="btn btn-secondary">Sign up</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Form Modals End -->
+        
+        <section id="prizes" class="prizes">
+    <div class="container">
+        <table class="prize-table">
+            <thead>
+                <tr>
+                    <th colspan="3">SEE WHAT YOU CAN WIN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div><div class="lucky-star">★</div>
+                        <span>5 MAIN NUMBERS<br>Plus 2 Lucky Stars</span>
+                    </td>
+                    <td>Jackpot</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div>
+                        <span>5 MAIN NUMBERS<br>Plus 1 Lucky Star</span>
+                    </td>
+                    <td>£130,554.30</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div>
+                        <span>5 MAIN NUMBERS</span>
+                    </td>
+                    <td>£13,561.20</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div><div class="lucky-star">★</div>
+                        <span>4 MAIN NUMBERS<br>Plus 2 Lucky Stars</span>
+                    </td>
+                    <td>£844.70</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div>
+                        <span>4 MAIN NUMBERS<br>Plus 1 Lucky Star</span>
+                    </td>
+                    <td>£77.80</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div><div class="lucky-star">★</div>
+                        <span>3 MAIN NUMBERS<br>Plus 2 Lucky Stars</span>
+                    </td>
+                    <td>£37.30</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div><div class="main-number"></div>
+                        <span>4 MAIN NUMBERS</span>
+                    </td>
+                    <td>£25.60</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div><div class="lucky-star">★</div>
+                        <span>2 MAIN NUMBERS<br>Plus 2 Lucky Stars</span>
+                    </td>
+                    <td>£9.10</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div> + 
+                        <div class="lucky-star">★</div>
+                        <span>3 MAIN NUMBERS<br>Plus 1 Lucky Star</span>
+                    </td>
+                    <td>£7.30</td>
+                </tr>
+                <tr>
+                    <td class="prize-category">
+                        <div class="main-number"></div><div class="main-number"></div><div class="main-number"></div>
+                        <span>3 MAIN NUMBERS</span>
+                    </td>
+                    <td>£6.00</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-white footer mt-5 pt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5 px-lg-5">
+                <div class="row gy-5 gx-4 pt-5">
+                    <div class="col-lg-5 col-md-12">
+                        <div class="row gy-5 g-4">
+                            <div class="col-md-6">
+                                <h5 class="fw-bold text-white mb-4">About Us</h5>
+                                <a class="btn btn-link" href="">About Us</a>
+                                <a class="btn btn-link" href="">Contact Us</a>
+                                <a class="btn btn-link" href="">Privacy Policy</a>
+                                <a class="btn btn-link" href="">Terms & Condition</a>
+                                <a class="btn btn-link" href="">Support</a>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="fw-bold text-white mb-4">Our Services</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-3">
+                        <h5 class="fw-bold text-white mb-4">Get In Touch</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>123 Street, New York, USA</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+012 345 67890</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>info@example.com</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4 mt-lg-n5">
+                        <div class="bg-light rounded" style="padding: 30px;">
+                            <input type="text" class="form-control border-0 py-2 mb-2" placeholder="Name">
+                            <input type="email" class="form-control border-0 py-2 mb-2" placeholder="Email">
+                            <textarea class="form-control border-0 mb-2" rows="2" placeholder="Message"></textarea>
+                            <button class="btn btn-secondary w-100 py-2">Send Message</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container px-lg-5">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="#">AngolaMillions</a>, All Right Reserved. 
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="">Home</a>
+                                <a href="">Cookies</a>
+                                <a href="">Help</a>
+                                <a href="">FQAs</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-secondary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'lottery/misc/wow/wow.min.js' %}"></script>
+    <script src="{% static 'lottery/misc/easing/easing.min.js' %}"></script>
+    <script src="{% static 'lottery/misc/waypoints/waypoints.min.js' %}"></script>
+    <script src="{% static 'lottery/misc/counterup/counterup.min.js' %}"></script>
+    <script src="{% static 'lottery/misc/owlcarousel/owl.carousel.min.js' %}"></script>
+
+    <!-- Template Javascript -->
+    <script src="{% static 'lottery/js/main.js' %}"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+          const form = document.getElementById("lottery-form");
+          let entries = Array.from({ length: 5 }, () => ({
+            numbers: [],
+            stars: [],
+          }));
+  
+          function handleSelection(event, type) {
+            const entryIndex = parseInt(event.currentTarget.dataset.entryIndex);
+            const value = event.target.dataset[type];
+            const collection = type === "number" ? "numbers" : "stars";
+            const isSelected = event.target.classList.contains("selected");
+  
+            if (
+              (collection === "numbers" && entries[entryIndex].numbers.length < 5) ||
+              (collection === "stars" && entries[entryIndex].stars.length < 2) ||
+              isSelected
+            ) {
+              event.target.classList.toggle("selected");
+              if (isSelected) {
+                entries[entryIndex][collection] = entries[entryIndex][collection].filter(
+                  (v) => v !== value
+                );
+              } else {
+                entries[entryIndex][collection].push(value);
+              }
+            }
+          }
+  
+          function addEntryListeners(entryIndex) {
+            const numbers = document.querySelectorAll(`#entry-${entryIndex + 1} .number`);
+            const stars = document.querySelectorAll(`#entry-${entryIndex + 1} .star`);
+  
+            numbers.forEach((number) => {
+              number.addEventListener("click", (event) => handleSelection(event, "number"));
+            });
+  
+            stars.forEach((star) => {
+              star.addEventListener("click", (event) => handleSelection(event, "star"));
+            });
+          }
+  
+          form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            let hasPartialEntry = false;
+            const validEntries = entries.filter(entry => {
+              const isComplete = entry.numbers.length === 5 && entry.stars.length === 2;
+              if (entry.numbers.length > 0 || entry.stars.length > 0) {
+                hasPartialEntry = !isComplete;
+              }
+              return isComplete;
+            });
+  
+            if (hasPartialEntry) {
+              alert("Some entries are partially filled. Please complete all or none of the entries.");
+              return;
+            }
+  
+            validEntries.forEach((entry, index) => {
+              const inputNumbers = document.createElement("input");
+              inputNumbers.type = "hidden";
+              inputNumbers.name = `normal_numbers_${index + 1}`;
+              inputNumbers.value = entry.numbers.join(",");
+              form.appendChild(inputNumbers);
+  
+              const inputStars = document.createElement("input");
+              inputStars.type = "hidden";
+              inputStars.name = `star_numbers_${index + 1}`;
+              inputStars.value = entry.stars.join(",");
+              form.appendChild(inputStars);
+            });
+  
+            form.submit();
+          });
+  
+          for (let i = 0; i < 5; i++) {
+            addEntryListeners(i);
+          }
+        });
+      </script>
+    <script>
+        // Function to calculate and display countdown
+        function countdown() {
+            // Set the date of the next Friday at 4 PM
+            var countDownDate = new Date();
+            countDownDate.setDate(countDownDate.getDate() + (5 + (7 - countDownDate.getDay())) % 7);
+            countDownDate.setHours(16, 0, 0, 0);
+
+            // Update the countdown every second
+            var x = setInterval(function () {
+                var now = new Date().getTime();
+                var distance = countDownDate - now;
+
+                // Calculate days, hours, minutes, and seconds
+                var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                // Display the countdown
+                document.getElementById("days").querySelector("h4").innerHTML = days;
+                document.getElementById("hours").querySelector("h4").innerHTML = hours;
+                document.getElementById("minutes").querySelector("h4").innerHTML = minutes;
+
+                // If the countdown is over, display a message
+                if (distance < 0) {
+                    clearInterval(x);
+                    document.getElementById("countdown").innerHTML = "Draw has started!";
+                }
+            }, 1000);
+        }
+
+        // Call the countdown function when the page loads
+        window.onload = function () {
+            countdown();
+        };
+    </script>
+</body>
+
+</html>

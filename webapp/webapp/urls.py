@@ -19,13 +19,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import include, path
-from lottery.views import signup_view, custom_logout
+from lottery.views import signup_view, custom_logout, homepage_view
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('lottery/', include('lottery.urls')),
-    path('', LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('', homepage_view, name='home'),
+    path('login/', LoginView.as_view(template_name='registration/login.html'), name='login'),
     path('logout/', custom_logout, name='logout'),
     path('register/', signup_view, name='register'),
     path('password-reset/', PasswordResetView.as_view(), name='password_reset'),
