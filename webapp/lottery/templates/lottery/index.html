@@ -131,14 +131,15 @@
 
         <!-- Form Modals Start -->
         <div class="modal fade" id="loginModal" tabindex="-1">
-            <div class="modal-dialog modal-fullscreen">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content" style="background: rgba(29, 40, 51, 0.8);">
                     <div class="modal-header border-0">
+                        <h2 class="text-center text-white">Log In</h2>
                         <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body d-flex align-items-center justify-content-center">
                         <div class="bg-light rounded" style="padding: 30px;">
-                            <h2>Log In</h2>
+                            
                             <form method="post" action="{% url 'login' %}">
                                 {% csrf_token %}
                                 <input type="hidden" name="form_type" value="login">
@@ -155,7 +156,7 @@
                                 </div>
                                 {% endfor %}
 
-                                <button type="submit">Login</button>
+                                <button class= "btn btn-secondary" type="submit">Login</button>
                             </form>
                         </div>
                     </div>
@@ -167,6 +168,7 @@
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content" style="background: rgba(29, 40, 51, 0.8);">
                     <div class="modal-header border-0">
+                        <h2 class="text-center text-white">Pick your numbers</h2>
                         <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
@@ -199,7 +201,7 @@
                               </div>
                               {% endfor %}
                             </div>
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="submit" class="btn btn-secondary">Submit</button>
                           </form>
                     </div>
                 </div>
@@ -210,6 +212,7 @@
             <div class="modal-dialog modal-fullscreen">
                 <div class="modal-content" style="background: rgba(29, 40, 51, 0.8);">
                     <div class="modal-header border-0">
+                        <h2 class="text-center text-white">Sign Up</h2>
                         <button type="button" class="btn bg-white btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body d-flex align-items-center justify-content-center">
